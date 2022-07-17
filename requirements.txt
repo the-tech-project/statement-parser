@@ -1,0 +1,4 @@
+tabula-py==2.4.0
+pandas>=0.25.3
+gensim==4.2.0
+pylint==2.14.5

@@ -1,0 +1,11 @@
+{
+    "HDFC": {
+        "particulars": 1,
+        "withdrawal": 4,
+        "deposit": 5,
+        "balance": 6,
+        "date": 0,
+        "chq": 2,
+        "value_date": 3
+   }
+}
