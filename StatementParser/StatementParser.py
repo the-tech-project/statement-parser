@@ -6,6 +6,7 @@ from StatementParser.Banks import HDFC
 
 import tabula
 
+
 class StatementParser:
 
     def __init__(self, filename, bank):
@@ -24,11 +25,11 @@ class StatementParser:
 
         # reading table using tabula
         return tabula.read_pdf(filename,
-                            pages='all',
-                            silent=True,
-                            pandas_options={
-                                'header': None
-                            })
+                               pages='all',
+                               silent=True,
+                               pandas_options={
+                                   'header': None
+                               })
 
     def get_transactions(self):
         return self.__output.transactions
@@ -55,4 +56,3 @@ class StatementParser:
 
     def to_list(self):
         return self.__output.transactions.to_dict('records')
-

@@ -5,6 +5,7 @@
 import json
 import os
 
+
 class Base:
 
     def __init__(self):
@@ -12,7 +13,12 @@ class Base:
 
     def get_mapping(self):
         # Opening JSON file
-        file = open(os.path.join(os.path.abspath(os.path.dirname(os.path.abspath(__file__))), 'mapping.json'))
+        file = open(
+            os.path.join(
+                os.path.abspath(
+                    os.path.dirname(
+                        os.path.abspath(__file__))),
+                'mapping.json'))
 
         # returns JSON object as
         # a dictionary
@@ -24,18 +30,18 @@ class Base:
         return data
 
     def maybe_convert_to_int(self, string):
-        if str == type( string ):
+        if isinstance(string, str):
             try:
-                return int( string )
-            except:
+                return int(string)
+            except BaseException:
                 return string
         return string
 
     def maybe_convert_to_float(self, string):
-        if str == type( string ):
+        if isinstance(string, str):
             try:
-                return float( string.replace(',','') )
-            except:
+                return float(string.replace(',', ''))
+            except BaseException:
                 return string
         return string
 

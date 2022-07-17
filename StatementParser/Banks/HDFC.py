@@ -8,7 +8,8 @@ from gensim.utils import tokenize
 import numpy
 import pandas
 
-class HDFC( Base ):
+
+class HDFC(Base):
 
     def __init__(self, transactions):
 
@@ -18,7 +19,7 @@ class HDFC( Base ):
         self.HEADER = 'header'
         self.STATEMENT_END = 'statement_end'
 
-        self.transactions = transactions;
+        self.transactions = transactions
 
         self.process()
 
@@ -94,7 +95,7 @@ class HDFC( Base ):
     def combine_transaction(self):
         combined_transactions = []
 
-        is_parsing_completed = False;
+        is_parsing_completed = False
 
         for row in self.transactions:
 
@@ -111,15 +112,16 @@ class HDFC( Base ):
                 transaction = self.normalize_transaction(transaction)
 
                 try:
-                    transaction = self.error_handling( transaction )
-                    transaction['category'] = self.categorize(transaction['particulars'])
-                    combined_transactions.append( transaction )
+                    transaction = self.error_handling(transaction)
+                    transaction['category'] = self.categorize(
+                        transaction['particulars'])
+                    combined_transactions.append(transaction)
                 except Exception as error:
 
-                    if self.STATEMENT_END == str( error ):
+                    if self.STATEMENT_END == str(error):
                         is_parsing_completed = True
 
-                    if 'header' == str( error ):
+                    if 'header' == str(error):
                         continue
 
         self.transactions = combined_transactions
@@ -127,19 +129,24 @@ class HDFC( Base ):
     def error_handling(self, transaction):
 
         if 'statement summary :' in transaction['particulars'].lower():
-            raise Exception( self.STATEMENT_END );
+            raise Exception(self.STATEMENT_END)
 
         if 'date' in transaction['date'].lower():
-            raise Exception( self.HEADER );
+            raise Exception(self.HEADER)
 
-        if str == type( transaction['deposit'] ) and ' ' in transaction['deposit']:
+        if isinstance(
+                transaction['deposit'],
+                str) and ' ' in transaction['deposit']:
             deposit, balance = transaction['deposit'].split(' ')
             transaction['deposit'] = deposit
             transaction['balance'] = balance
 
-        transaction['withdrawal'] = self.maybe_convert_to_float( transaction['withdrawal'] )
-        transaction['deposit'] = self.maybe_convert_to_float( transaction['deposit'] )
-        transaction['balance'] = self.maybe_convert_to_float( transaction['balance'] )
+        transaction['withdrawal'] = self.maybe_convert_to_float(
+            transaction['withdrawal'])
+        transaction['deposit'] = self.maybe_convert_to_float(
+            transaction['deposit'])
+        transaction['balance'] = self.maybe_convert_to_float(
+            transaction['balance'])
 
         return transaction
 
@@ -148,13 +155,20 @@ class HDFC( Base ):
         bank = self.BANK_DETAILS[self.BANK]
 
         return {
-            'date': transaction[ bank['date'] ] if self.index_exist(transaction, bank['date']) == True else numpy.nan,           # index of date column
-            'particulars': transaction[ bank['particulars'] ] if self.index_exist(transaction, bank['particulars']) == True else numpy.nan,    # index of particulars column
-            'chq': transaction[ bank['chq'] ] if self.index_exist(transaction, bank['chq']) == True else numpy.nan,            # index of cheque no. column
-            'value_date': transaction[ bank['value_date'] ] if self.index_exist(transaction, bank['value_date']) == True else numpy.nan,      # index of value date column
-            'withdrawal': transaction[ bank['withdrawal'] ] if self.index_exist(transaction, bank['withdrawal']) == True else numpy.nan,     # index of withdrawal column
-            'deposit': transaction[ bank['deposit'] ] if self.index_exist(transaction, bank['deposit']) == True else numpy.nan,        # index of deposit column
-            'balance': transaction[ bank['balance'] ] if self.index_exist(transaction, bank['balance']) == True else numpy.nan,        # index of balance column
+            # index of date column
+            'date': transaction[bank['date']] if self.index_exist(transaction, bank['date']) else numpy.nan,
+            # index of particulars column
+            'particulars': transaction[bank['particulars']] if self.index_exist(transaction, bank['particulars']) else numpy.nan,
+            # index of cheque no. column
+            'chq': transaction[bank['chq']] if self.index_exist(transaction, bank['chq']) else numpy.nan,
+            # index of value date column
+            'value_date': transaction[bank['value_date']] if self.index_exist(transaction, bank['value_date']) else numpy.nan,
+            # index of withdrawal column
+            'withdrawal': transaction[bank['withdrawal']] if self.index_exist(transaction, bank['withdrawal']) else numpy.nan,
+            # index of deposit column
+            'deposit': transaction[bank['deposit']] if self.index_exist(transaction, bank['deposit']) else numpy.nan,
+            # index of balance column
+            'balance': transaction[bank['balance']] if self.index_exist(transaction, bank['balance']) else numpy.nan,
         }
 
     def categorize(self, particular):
@@ -181,4 +195,3 @@ class HDFC( Base ):
 
     def to_dataframe(self):
         self.transactions = pandas.DataFrame(self.transactions)
-
